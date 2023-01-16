@@ -1,7 +1,7 @@
 package com.example.kafka.domain.kafka.messaging.taxpayer;
 
 import com.example.kafka.domain.kafka.KafkaTopicNames;
-import com.example.kafka.domain.kafka.messaging.KafkaProducerCallback;
+import com.example.kafka.domain.kafka.messaging.KafkaProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +18,6 @@ public class TaxPayerProducer {
   public void send(String key, String value) {
     var producerRecord = new ProducerRecord<>(KafkaTopicNames.TAX_PAYER_TOPIC, key, value);
 
-    kafkaTemplate.send(producerRecord).addCallback(new KafkaProducerCallback<>());
+    kafkaTemplate.send(producerRecord).addCallback(new KafkaProducerConfig.ProducerCallback<>());
   }
 }

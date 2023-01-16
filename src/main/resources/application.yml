@@ -9,7 +9,3 @@ kafka:
   topic:
     numPartitions: 3
     replicationFactor: 1
-
-logging:
-  pattern:
-    console: '%d{"yyyy/MM/dd HH:mm:ss,SSS"} [%p] [%t] %M\(%F:%L\) - %msg%n'
