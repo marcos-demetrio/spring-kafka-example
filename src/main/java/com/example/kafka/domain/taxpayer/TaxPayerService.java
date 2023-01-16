@@ -1,7 +1,7 @@
 package com.example.kafka.domain.taxpayer;
 
-import com.example.kafka.infra.kafka.producer.taxpayer.TaxPayerEvent;
-import com.example.kafka.infra.kafka.producer.taxpayer.TaxPayerProducer;
+import com.example.kafka.domain.exception.RetryableException;
+import com.example.kafka.domain.kafka.messaging.taxpayer.TaxPayerProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,24 +15,28 @@ public class TaxPayerService {
   private final TaxPayerProducer producer;
 
   public TaxPayer create(TaxPayer taxPayer) {
-    taxPayer.setId(UUID.randomUUID());
+    var taxPayerId = UUID.randomUUID();
 
-    var event = TaxPayerEvent.fromTaxPayer(taxPayer);
+    taxPayer.setId(taxPayerId);
 
-    producer.send(event);
+    producer.send(taxPayer.getId().toString(), taxPayer.getName());
 
     return taxPayer;
   }
 
   public TaxPayer update(TaxPayer taxPayer) {
-    var event = TaxPayerEvent.fromTaxPayer(taxPayer);
-
-    producer.send(event);
-
     return taxPayer;
   }
 
-  public void processTaxPayerEvent(TaxPayerEvent event) {
-    log.info("TaxPayer: id={}, name={}", event.getId(), event.getName());
+  public void processTaxPayer(String event) {
+    if (event.startsWith("retry")) {
+      throw new RetryableException("An error occurred retrying with event ".concat(event));
+    }
+
+    if (event.startsWith("fail")) {
+      throw new RetryableException("An error occurred with event ".concat(event));
+    }
+
+    log.info("Processing: name={}", event);
   }
 }

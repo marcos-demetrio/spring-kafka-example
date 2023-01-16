@@ -1,14 +1,15 @@
 kafka:
   trustStoreLocation: ""
   bootstrapServers: 127.0.0.1:9092
+  groupId: "consumer-group-tax-payer"
+  acksConfig: "all"
+  retriesConfig: 10
+  autoOffsetReset: "earliest"
 
   topic:
-    taxpayer:
-      name: "com.example.taxpayer.0"
-      acksConfig: "all"
-      retriesConfig: 10
-      groupId: "consumer-group-tax-payer"
-      autoOffsetReset: "earliest"
-      retention: "-1"
-      partitionCount: 3
-      replicaCount: 1
+    numPartitions: 3
+    replicationFactor: 1
+
+logging:
+  pattern:
+    console: '%d{"yyyy/MM/dd HH:mm:ss,SSS"} [%p] [%t] %M\(%F:%L\) - %msg%n'
